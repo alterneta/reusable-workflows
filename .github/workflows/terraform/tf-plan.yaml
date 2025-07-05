@@ -1,0 +1,38 @@
+name: Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      aws_role:
+        required: true
+        type: string
+      aws_region:
+        required: true
+        type: string
+
+jobs:
+  plan:
+    name: 📝 Terraform Plan
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - run: terraform init
+      - run: terraform validate
+      - run: terraform plan -out=tfplan
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
