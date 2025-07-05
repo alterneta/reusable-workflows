@@ -2,10 +2,10 @@ name: Terraform Plan
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       aws_role:
         required: true
-        type: string
+    inputs:
       aws_region:
         required: true
         type: string
@@ -23,7 +23,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ inputs.aws_role }}
+          role-to-assume: ${{ secrets.aws_role }}
           aws-region: ${{ inputs.aws_region }}
 
       - uses: hashicorp/setup-terraform@v3
